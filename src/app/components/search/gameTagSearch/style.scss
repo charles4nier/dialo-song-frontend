@@ -1,0 +1,56 @@
+/* Conteneur principal */
+.tag-search-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* Champ de saisie */
+.tag-search-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: #000;
+}
+
+/* Liste des suggestions */
+.suggestions-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 150px;
+    overflow-y: auto;
+    background-color: #fff;
+    position: absolute;
+    width: 100%;
+    z-index: 10;
+}
+
+/* Élément de la liste des suggestions */
+.suggestions-list li {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    color: #000;
+}
+
+/* Survol d'un élément */
+.suggestions-list li:hover,
+.active-suggestion {
+    background-color: #007BFF; /* Bleu clair pour l'élément sélectionné */
+    color: #fff; /* Texte blanc pour le contraste */
+    border-left: 4px solid #0056b3; /* Bordure gauche bleu foncé */
+}
+
+/* Dernier élément de la liste sans bordure inférieure */
+.suggestions-list li:last-child {
+    border-bottom: none;
+}

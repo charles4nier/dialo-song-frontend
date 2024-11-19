@@ -1,0 +1,47 @@
+.loopsie-header {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 110%;
+    pointer-events: none;
+    top: 0;
+    left: -5%;
+    padding-left: 5%;
+    background: #1a1a40;
+    border-radius: 15px;
+    box-shadow: 10px 10px 20px #13132a, -10px -10px 20px #202056;
+    
+    &__container {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        width: 100%;
+        padding: 10px;
+        pointer-events: all;
+    }
+
+    h1 {
+        display: flex;
+        align-items: center;
+        font-family: 'Lobster', cursive;
+        font-size: 35px;
+        text-decoration: underline;
+        text-decoration-color: #000;
+        &::after {
+            position: absolute;
+            content: '';
+            display: inline-block;
+            height: 8px;
+            width: 8px;
+            background: #FDC830;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #F37335, #FDC830);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #F37335, #FDC830); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+            border-radius: 50%;
+            top: 18px;
+            left: 106px;
+        }
+
+    }
+}
