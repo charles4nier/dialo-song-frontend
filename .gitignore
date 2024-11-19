@@ -1,4 +1,40 @@
+# Node.js
 node_modules/
-.env
+.npm/
 dist/
 build/
+
+# Next.js
+.next/
+
+# Environnements locaux et secrets
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Systèmes d'exploitation
+.DS_Store
+Thumbs.db
+
+# Éditeurs de texte
+.idea/
+.vscode/
+
+# Cache
+.cache/
+
+# Typescript
+*.tsbuildinfo
+
+# Divers
+coverage/
+*.pid
