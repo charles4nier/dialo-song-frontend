@@ -1,289 +1,154 @@
-"use client";
+import React, { useEffect, useState, useRef } from 'react';
+import classNames from 'classnames';
+import AudioPlayerClass from './audioPlayerClass';
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
-// import { getStrapiUrl }from '@/services/api';
+const BASE_CLASSNAME = 'fs-audio-player';
 
-import "./style.scss";
+const AudioPlayer = ({ tracks }) => {
+  console.log('allooooooo', tracks);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(0.7);
+  const [audioPlayerInit, setAudioPlayerIsInit] = useState(false);
+  const audioPlayer = useRef(new AudioPlayerClass({tracks, setAudioPlayerIsInit}));
 
-// import SvgPlay from '@/app/components/svg/svgPlay';
-// import SvgPause from '@/app/components/svg/svgPause';
-// import SvgPrevious from '@/app/components/svg/svgPrevious';
-// import SvgNext from '@/app/components/svg/svgNext';
+	// Ref for the seek bar to update its width without triggering re-renders
+	const progressBarRef = useRef(null);
 
+	useEffect(() => {
+		if (audioPlayerInit) {
+			// Get duration of the current track once
+			setDuration(audioPlayer.current.getDuration());
 
+			// Use onProgressUpdate to update the width of the seek bar
+			audioPlayer.current.onProgressUpdate((progress) => {
+				if (progressBarRef.current) {
+					progressBarRef.current.style.width = `${progress * 100}%`;
+				}
+			});
+		}
+	}, [audioPlayerInit]);
 
-// interface AudioPlayerProps {
-//   playlist: TrackType[];
-// }
+	const handlePlayPause = () => {
+		if (isPlaying) {
+			audioPlayer.current.pause();
+		} else {
+			audioPlayer.current.play();
+		}
+		setIsPlaying(!isPlaying);
+	};
 
-const AudioPlayer  = () => {
-// const AudioPlayer: React.FC<AudioPlayerProps> = ({ playlist }) => {
-  // const [currentTrackIndex, setCurrentTrackIndex] = useState<number>(0);
-  // const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  // const audioContextRef = useRef<AudioContext | null>();
-  // const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null);
-  // const audioBufferRef = useRef<AudioBuffer | null>(null);
-  // const progressBarRef = useRef<HTMLDivElement>(null);
-  // const progressRef = useRef<HTMLDivElement>(null);
-  // const animationFrameRef = useRef<number | null>(null);
-  // const currentTimeRef = useRef<number>(0);
-  // const startTimeRef = useRef<number>(0);
-  // const tickerTimeRef = useRef<number>(Date.now());
-  // const clickNextRef = useRef<boolean>(false);
-  // const isPlayingRef = useRef<boolean>(false);
-  // const timeStampRef = useRef<number | null>(null);
-  // const tickerRef = useRef<number>(0);
+	const handleNext = () => {
+		audioPlayer.current.nextTrack();
+		setCurrentTrackIndex((prevIndex) => (prevIndex + 1) % tracks.length);
+		setIsPlaying(true);
+	};
 
-  // const updateTimeStampRef = () => {
-  //   tickerRef.current = tickerRef.current + 1;
+	const handlePrevious = () => {
+		audioPlayer.current.previousTrack();
+		setCurrentTrackIndex((prevIndex) => (prevIndex - 1 + tracks.length) % tracks.length);
+		setIsPlaying(true);
+	};
 
-  //   if (tickerRef.current >= 179) {
-  //     cancelAnimationFrame(timeStampRef.current);
-  //     timeStampRef.current = null;
-  //     tickerRef.current = 0;
-  //     return;
-  //   }
+	const handleVolumeChange = (event) => {
+		const newVolume = parseFloat(event.target.value);
+		setVolume(newVolume);
+		audioPlayer.current.setVolume(newVolume);
+	};
 
-  //   timeStampRef.current = requestAnimationFrame(updateTimeStampRef);
-  // };
+	const handleSeekChange = (event) => {
+		const newPosition = parseFloat(event.target.value);
+		audioPlayer.current.seekTo(newPosition);
+		if (progressBarRef.current) {
+			progressBarRef.current.style.width = `${(newPosition / duration) * 100}%`;
+		}
+	};
 
-  // const loadTrack = useCallback(
-  //   async (index: number) => {
-  //     let srcTmp = playlist[index].src;
+	const handleTrackSelect = (index) => {
+		setCurrentTrackIndex(index);
+		audioPlayer.current.selectTrack(index);
+		setIsPlaying(true);
+	};
 
-  //     if (srcTmp.startsWith('/')) {
-  //       srcTmp = srcTmp.substring(1);
-  //     }
-  
-  //     const trackUrl = getStrapiUrl(srcTmp);
-  //     console.log('trackUrl :::: ', trackUrl);
-  //     if (!trackUrl) {
-  //       console.error("Invalid URL:", trackUrl);
-  //       return;
-  //     }
-
-  //     try {
-  //       const response = await fetch(trackUrl);
-  //       const arrayBuffer = await response.arrayBuffer();
-
-  //       const audioBuffer =
-  //         await audioContextRef.current.decodeAudioData(arrayBuffer);
-  //       audioBufferRef.current = audioBuffer;
-
-  //       if (isPlayingRef.current) {
-  //         setTrack(0);
-  //       }
-  //     } catch (error) {
-  //       console.error("Erreur lors du chargement du fichier audio", error);
-  //     }
-  //   },
-  //   [isPlaying, playlist]
-  // );
-
-  // const setProgressBar = (reset = false) => {
-  //   if (progressRef.current) {
-  //     const updatedTime =
-  //       (Date.now() - tickerTimeRef.current) / 1000 + startTimeRef.current;
-  //     const progress = reset
-  //       ? 0
-  //       : (updatedTime / (audioBufferRef.current?.duration || 1)) * 100;
-  //     progressRef.current.style.width = `${progress}%`;
-	//   currentTimeRef.current = updatedTime;
-  //   }
-  // };
-
-
-  // const updateProgress = () => {
-  //   setProgressBar();
-  //   animationFrameRef.current = requestAnimationFrame(updateProgress);
-  // };
-  
-  // // Play track
-  // const setTrack = useCallback((startTime: number) => {
-  //   if (sourceNodeRef.current) {
-  //     sourceNodeRef.current.stop();
-  //   }
-  
-  //   if (!audioBufferRef.current || !audioContextRef.current) return;
-
-  //   const newSourceNode = audioContextRef.current.createBufferSource();
-  //   newSourceNode.buffer = audioBufferRef.current;
-  //   newSourceNode.connect(audioContextRef.current.destination);
-  //   newSourceNode.start(0, startTime);
-  //   newSourceNode.onended = handleOnEnd;
-  //   sourceNodeRef.current = newSourceNode;
-  //   startTimeRef.current = startTime;
-  //   tickerTimeRef.current = Date.now();
-
-  //   if (animationFrameRef.current !== null) {
-  //     cancelAnimationFrame(animationFrameRef.current);
-  //   }
-
-  //   if (isPlayingRef.current) {
-  //     updateProgress();
-  //   } else {
-  //     newSourceNode.stop();
-  //     setProgressBar();
-  //   }
-  
-  // }, [isPlaying]);
-
-  // // Previous track
-  // const handlePrev = () => {
-  //   const prevIndex =
-  //     (currentTrackIndex - 1 + playlist.length) % playlist.length;
-  //     setCurrentTrackIndex(prevIndex);
-  //     loadTrack(prevIndex);
-  // };
-
-  // const handleClickPrev = () => {
-  //   const currentTime =  Math.round(currentTimeRef.current);
-
-  //   if (animationFrameRef.current !== null) {
-  //     cancelAnimationFrame(animationFrameRef.current);
-  //   }
-
-  //   setProgressBar(true);
-
-  //   sourceNodeRef?.current?.stop();
-
-  //   if (timeStampRef.current && tickerRef.current < 179 && currentTime < 3) {
-  //     tickerRef.current = 0;
-  //     isPlayingRef.current = true
-  //     handlePrev();
-  //   } else {
-  //     if (currentTime < 3) {
-  //       isPlayingRef.current = true
-  //       handlePrev();
-  //     } else {
-  //       setTrack(0);
-  //     }
-
-  //     if (!timeStampRef.current) {
-  //       updateTimeStampRef()
-  //     }
-  //   }
-
-  // };
-
-  // // Handle Play/Pause track
-  // const handlePlayPause = () => {
-  //   if (isPlayingRef.current) {
-	//     setIsPlaying(false);
-	//     isPlayingRef.current = false;
-  //     if (sourceNodeRef.current) {
-  //       sourceNodeRef.current.stop();
-  //     }
-     
-  //     if (animationFrameRef.current !== null) {
-  //       cancelAnimationFrame(animationFrameRef.current);
-  //     }
-  //   } else {
-  //     isPlayingRef.current = true;
-  //     setIsPlaying(true);
-  //     if (audioBufferRef.current) {
-  //       setTrack(startTimeRef.current);
-  //     }
-  //   }
-  // };
-
-  // // Next track
-  // const handleNext = useCallback(() => {
-  //   if (isPlayingRef.current) {
-  //     if (sourceNodeRef.current) {
-  //       sourceNodeRef.current.stop();
-  //     }
-  //   } else {
-  //     isPlayingRef.current = true;
-  //   }
-  //     const nextIndex = (currentTrackIndex + 1) % playlist.length;
-  //     setCurrentTrackIndex(nextIndex);
-  //     loadTrack(nextIndex);
-  //   }, [isPlaying, currentTrackIndex, playlist]);
-
-  //   const handleClickNext = () => {
-  //   clickNextRef.current = true;
-  //   handleNext();
-  // };
-
-  // // Progress bar click
-  // const handleProgressBarClick = (
-  //   e: React.MouseEvent<HTMLDivElement, MouseEvent>
-  // ) => {
-  //   if (audioBufferRef.current) {
-  //     const rect = progressBarRef.current?.getBoundingClientRect();
-  //     if (rect) {
-  //       const clickX = e.clientX - rect.left;
-  //       const newTime = (clickX / rect.width) * audioBufferRef.current.duration;
-
-  //       setTrack(newTime);
-  //     }
-  //   }
-  // };
-
-  // // End track
-  // const handleOnEnd = () => {
-  //   const duration =  Math.round(audioBufferRef?.current?.duration || 0);
-  //   const currentTime =  Math.round(currentTimeRef.current);
-
-  //   if (clickNextRef.current || currentTime === duration) {
-  //     clickNextRef.current = false
-  //     handleNext();
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   audioContextRef.current = new (window.AudioContext ||
-  //     window.webkitAudioContext)();
-  //   setProgressBar(true);
-  //   loadTrack(0);
-  //   return () => {
-  //     if (sourceNodeRef.current) {
-  //       sourceNodeRef.current.stop();
-  //     }
-  //     if (audioContextRef.current) {
-  //       audioContextRef.current.close();
-  //     }
-  //     if (animationFrameRef.current !== null) {
-  //       cancelAnimationFrame(animationFrameRef.current);
-  //     }
-  //   };
-  // }, []);
-
-  // return (
-  //   <div id="player">
-  //     <div id="tracklist">
-  //       {playlist.map((track, index) => (
-  //         <button
-  //           className={currentTrackIndex === index ? "active" : ""}
-  //           key={index}
-  //           onClick={() => {
-  //             setCurrentTrackIndex(index);
-  //             loadTrack(index);
-  //           }}
-  //         >
-  //           {track.title}
-  //         </button>
-  //       ))}
-  //     </div>
-  //     <div id="controls">
-  //       <button onClick={handleClickPrev}><SvgPrevious/></button>
-  //       <button onClick={handlePlayPause} className="playPause">
-  //         {isPlaying ? <SvgPause/> : <SvgPlay />}
-  //       </button>
-  //       <button onClick={handleClickNext}><SvgNext/></button>
-  //     </div>
-  //     <div
-  //       id="progress-bar"
-  //       ref={progressBarRef}
-  //       className="progress-bar"
-  //       onClick={handleProgressBarClick}
-  //     >
-  //       <div id="progress" className="progress" ref={progressRef}></div>
-  //     </div>
-  //   </div>
-  // );
-  <div></div>
+	return (
+		<div className={BASE_CLASSNAME}>
+			<div className={`${BASE_CLASSNAME}__controls`}>
+				<button
+					type="button"
+					onClick={handlePrevious}
+					className={classNames(`${BASE_CLASSNAME}__button`)}
+				>
+					Previous
+				</button>
+				<button
+					type="button"
+					onClick={handlePlayPause}
+					className={classNames(`${BASE_CLASSNAME}__button`, {
+						[`${BASE_CLASSNAME}__button--playing`]: isPlaying,
+					})}
+				>
+					{isPlaying ? 'Pause' : 'Play'}
+				</button>
+				<button
+					type="button"
+					onClick={handleNext}
+					className={classNames(`${BASE_CLASSNAME}__button`)}
+				>
+					Next
+				</button>
+			</div>
+			<div className={classNames(`${BASE_CLASSNAME}__volume-control`)}>
+				<label>Volume:</label>
+				<input
+					type="range"
+					min="0"
+					max="1"
+					step="0.01"
+					value={volume}
+					onChange={handleVolumeChange}
+					className={classNames(`${BASE_CLASSNAME}__volume-slider`)}
+				/>
+			</div>
+			<div className={classNames(`${BASE_CLASSNAME}__seek-bar-container`)}>
+				<div
+					className={classNames(`${BASE_CLASSNAME}__seek-bar`)}
+					ref={progressBarRef}
+				></div>
+				<input
+					type="range"
+					min="0"
+					max={duration}
+					step="0.1"
+					onChange={handleSeekChange}
+					className={classNames(`${BASE_CLASSNAME}__seek-slider`)}
+				/>
+				<span className={classNames(`${BASE_CLASSNAME}__time`)}>
+					{Math.floor((progressBarRef.current?.style.width || '0').replace('%', ''))} /{' '}
+					{Math.floor(duration)}
+				</span>
+			</div>
+			<div className={classNames(`${BASE_CLASSNAME}__playlist`)}>
+				{tracks.map((track, index) => (
+					<button
+						type="button"
+						key={index}
+						onClick={() => handleTrackSelect(index)}
+						className={classNames(`${BASE_CLASSNAME}__track`, {
+							[`${BASE_CLASSNAME}__track--active`]: index === currentTrackIndex,
+						})}
+						style={{
+							cursor: 'pointer',
+							color: index === currentTrackIndex ? 'blue' : 'black',
+						}}
+					>
+						{track}
+					</button>
+				))}
+			</div>
+		</div>
+	);
 };
 
 export default AudioPlayer;
+

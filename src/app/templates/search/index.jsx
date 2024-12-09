@@ -4,83 +4,104 @@ import React, { useState, useEffect } from 'react';
 import { getData } from '../../../services/api';
 import GameTagSearch from '../../components/search/gameTagSearch';
 import PlaylistCard from '../../components/search/playlistCard';
-import GameSettingButton from '../../components/search/gameSettingButton'; // Import du nouveau composant
+import GameSettingButton from '../../components/search/gameSettingButton';
 
 
 export default function Search({ gameTags }){
   const [playlists, setPlaylists] = useState(null);
   const [gameSettingTags, setGameSettingTags] = useState(null);
   const [showGameSettingTags, setShowGameSettingTags] = useState(false);
+  const [gameSettingMessage, setGameSettingMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingGameSettingTags, setIsLoadingGameSettingTags] = useState(false);
 
-  // Fonction pour faire le fetch des playlists en fonction du tag sélectionné
-  const fetchPlaylistsByTag = async (tag) => {
+  const fetchPlaylistsByGameTag = async (tag) => {
+    if (!tag) {
+      setErrorMessage('Please enter a tag');
+      return;
+    }
+  
+    setIsLoading(true);
+    if (gameTags[tag]) {
+      const playlistKeys = gameTags[tag];
+      try {
+        const playlistPromises = playlistKeys.map(async (playlistKey) => {
+          const response = await fetch(`/emulate-datas/playlists/${playlistKey}/index.json`);
+          if (!response.ok) {
+            throw new Error(`Playlist "${playlistKey}" for tag "${tag}" not found`);
+          }
+          const data = await response.json();
+  
+          const coverUrl = `/emulate-datas/playlists/${playlistKey}/cover.webp`;
+          data.cover = coverUrl;
+  
+          return data;
+        });
+
+        const playlists = await Promise.all(playlistPromises);
+ 
+        setPlaylists(playlists);
+        setErrorMessage('');
+  
+      } catch (error) {
+        console.error('Error fetching playlists by tag:', error);
+        setErrorMessage(`Nous n'avons pas trouvé jeu correspondant au titre "${tag}". Pas de panique, nous pouvons quand même trouver une playlist pour votre jeu. Choisissez l'ambiance qui colle le mieux à votre jeu`);
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      setGameSettingMessage(`Nous n'avons pas trouvé jeu correspondant au titre "${tag}". Pas de panique, nous pouvons quand même trouver une playlist pour votre jeu. Choisissez l'ambiance qui colle le mieux à votre jeu`);
+      setIsLoading(false);
+      setShowGameSettingTags(true);
+    }
+  };
+  
+  const fetchPlaylistsBySettingTag = async (tag) => {
     if (!tag) {
       setErrorMessage('Please enter a tag');
       return;
     }
 
     setIsLoading(true);
+    const playlistKeys = gameSettingTags[tag];
     try {
-      const response = await getData(`/playlists/by-game-tag/${tag}`);
+      const playlistPromises = playlistKeys.map(async (playlistKey) => {
+        const response = await fetch(`/emulate-datas/playlists/${playlistKey}/index.json`);
+        if (!response.ok) {
+          throw new Error(`Playlist "${playlistKey}" for tag "${tag}" not found`);
+        }
+        const data = await response.json();
 
-      const playLists = [...response.mainTheme || [], ...response.secondaryTheme || []];
-      if (playLists.length === 0) {
-        setErrorMessage(
-          "Désolé, nous n'avons pas trouvé de playlist spécialement conçue pour votre jeu. Mais pas de panique, on va vous aider à trouver quelque chose ! Choisissez l'univers dans lequel se passe votre jeu."
-        );
-        setShowGameSettingTags(true);
-      } else {
-        setPlaylists(playLists);
-        setErrorMessage('');
-      }
+        const coverUrl = `/emulate-datas/playlists/${playlistKey}/cover.webp`;
+        data.cover = coverUrl;
+
+        return data;
+      });
+
+      const playlists = await Promise.all(playlistPromises);
+
+      setPlaylists(playlists);
+      setErrorMessage('');
+
     } catch (error) {
-      console.error('Error fetching playlists:', error);
-      setErrorMessage(
-        "Désolé, nous n'avons pas trouvé de playlist spécialement conçue pour votre jeu. Mais pas de panique, on va vous aider à trouver quelque chose ! Choisissez l'univers dans lequel se passe votre jeu."
-      );
+      console.error('Error fetching playlists by tag:', error);
+      setErrorMessage(`Nous n'avons pas trouvé jeu correspondant au titre "${tag}". Pas de panique, nous pouvons quand même trouver une playlist pour votre jeu. Choisissez son univers :`);
     } finally {
       setIsLoading(false);
-    }
+    }  
   };
 
-    // Fonction pour faire le fetch des playlists en fonction du tag sélectionné
-    const fetchPlaylistsBySettingTag = async (tag) => {
-      if (!tag) {
-        setErrorMessage('Please enter a tag');
-        return;
-      }
-  
-      setIsLoading(true);
-      try {
-        const response = await getData(`/playlists/by-game-setting-tag/${tag}`);
-        const {playlists} = response;
-        console.log('playlists :::: ', playlists);
-        setPlaylists(playlists);
-        setErrorMessage('');
-      } catch (error) {
-        console.error('Error fetching playlists:', error);
-        setErrorMessage(
-          "Désolé, nous n'avons pas trouvé de playlist spécialement conçue pour votre jeu. Mais pas de panique, on va vous aider à trouver quelque chose ! Choisissez l'univers dans lequel se passe votre jeu."
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-  // Fonction pour faire le fetch des game-setting-tags après un délai
   const fetchGameSettingTags = async () => {
     setIsLoadingGameSettingTags(true);
     try {
-      const response = await getData('/game-setting-tags/all');
+      const response = await fetch(`/emulate-datas/game-setting/index.json`);
 
-      if (!response.length) {
+      if (!response.ok) {
         throw new Error('Failed to fetch game setting tags');
       }
-      console.log('response setting alors :::: ', [...response]);
-      setGameSettingTags([...response]);
+      const data = await response.json();
+      setGameSettingTags({...data});
     } catch (error) {
       console.error('Error fetching game setting tags:', error);
       setErrorMessage('Failed to fetch game setting tags.');
@@ -89,30 +110,27 @@ export default function Search({ gameTags }){
     }
   };
 
-  // useEffect pour déclencher la requête après un délai
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchGameSettingTags();
-    }, 500); // Délai ajusté
+    }, 500);
 
-    return () => clearTimeout(timer); // Nettoyage du timer en cas de démontage du composant
+    return () => clearTimeout(timer);
   }, []);
 
   const handleSuggestionSelected = (suggestion) => {
-    fetchPlaylistsByTag(suggestion);
+    fetchPlaylistsByGameTag(suggestion);
   };
-
-  console.log('dzadzaz', playlists);
 
   return (
     <div>
       <h1>Search for Playlists by Game Tag</h1>
-      <GameTagSearch tags={gameTags} onSuggestionSelected={handleSuggestionSelected} />
+      <GameTagSearch tags={Object.keys(gameTags)} onSuggestionSelected={handleSuggestionSelected} />
 
       {isLoading && <p>Loading playlists...</p>}
 
       {errorMessage && (
-        <p>{errorMessage}</p> // Paragraphe conditionnel pour afficher les messages d'erreur
+        <p>{errorMessage}</p>
       )}
 
       {playlists && playlists.length > 0 && (
@@ -130,15 +148,14 @@ export default function Search({ gameTags }){
         <p>No playlists found for the selected tag.</p>
       )}
 
-      {/* Gestion de l'affichage des game-setting-tags */}
       {isLoadingGameSettingTags && <p>Loading game setting tags...</p>}
 
-      {!playlists && showGameSettingTags && gameSettingTags && gameSettingTags.length > 0 && (
+      {gameSettingMessage && !playlists && showGameSettingTags && gameSettingTags && (
         <div>
-          <h2>Choisissez l'univers de votre jeu</h2>
+         <p>{gameSettingMessage}</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-            {gameSettingTags.map((tag) => (
-              <GameSettingButton key={tag.id} onClick={fetchPlaylistsBySettingTag} tag={tag.toString()}/>
+            {Object.keys(gameSettingTags).map((tag) => (
+              <GameSettingButton key={tag} onClick={fetchPlaylistsBySettingTag} tag={tag}/>
             ))}
           </div>
         </div>
