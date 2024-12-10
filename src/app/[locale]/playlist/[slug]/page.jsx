@@ -18,11 +18,12 @@ export default async function Playlist({ params }) {
     // Lire et parser le fichier JSON
     fileContents = fs.readFileSync(filePath, 'utf-8'),
     data = JSON.parse(fileContents);
-    data.basePlayListUrl = `/emulate-datas/playlists/${slug}/playlist/0`;
+    data.basePlayListUrl = `/emulate-datas/playlists/${slug}/playlist/0`,
+    data.coverUrl =  `/emulate-datas/playlists/${slug}/cover.webp`;
 
     if (!data || !Object.keys(data).length) {
         redirect('/fr')
     }
-    console.log('data', data)
+
     return (<PlayListTemplate data={{...data}}/>)
 }

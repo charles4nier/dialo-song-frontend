@@ -3,17 +3,10 @@
 body {
     font-family: 'Manrope', sans-serif;
     width: 100%;
-    padding: 64px 10px 20px;
     min-height: 100vh;
-//     background: #292F36;
-   
-// background: rgb(39,42,77);
-// background: linear-gradient(138deg, rgba(39,42,77,1) 42%, rgba(49,34,88,1) 100%);
-
-//     background: rgb(46,136,224);
-// background: linear-gradient(138deg, rgba(46,136,224,1) 44%, rgba(67,249,251,1) 100%);
-
-background: #1a1a40;
+    background: #000000;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to bottom   , #434343, #000000);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to bottom   , #434343, #000000); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     
 }
 

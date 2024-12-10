@@ -1,0 +1,23 @@
+.template-playlist {
+    position: relative;
+	padding: 0 30px 30px;
+
+    &__cover {
+        width: 100%;
+    }
+
+    &__cover__wrapper {
+        padding: 15px 0;
+    }
+
+    &__title {
+        font-size: 40px;
+        font-weight: 500;
+    }
+
+    &__subtitle {
+        font-size: 18px;
+        line-height: 2;
+        color: #b2b2b2;
+    }
+}

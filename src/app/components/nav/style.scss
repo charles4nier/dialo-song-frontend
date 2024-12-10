@@ -4,12 +4,11 @@
     width: 110%;
     padding: 20px 10%;
     pointer-events: all;
-    background: #1a1a40;
-    border-radius: 15px;
-    box-shadow: 10px 10px 20px #13132a, -10px -10px 20px #202056;
+    background: #414a4b;
     bottom: 0;
     left: -5%;
     z-index: 10;
+    border-top: 1px solid #434647;
 
     ul {
         display: flex;

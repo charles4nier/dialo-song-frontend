@@ -11,9 +11,10 @@ class AudioPlayerClass {
 
 	 progressAnimationFrame = null;
 
-	constructor({tracks, setAudioPlayerIsInit}) {
+	constructor({tracks, setAudioPlayerIsInit, progressBarRef}) {
 		this.tracks = tracks;
 		this.setAudioPlayerIsInit = setAudioPlayerIsInit;
+		this.progressBarRef = progressBarRef;
 		this.currentTrackIndex = 0;
 		this.sound = null;
 		this.volume = 0.7;
@@ -26,7 +27,7 @@ class AudioPlayerClass {
 			this.sound.unload();
 		}
 		this.sound = new Howl({
-			src: [this.tracks[index]],
+			src: [this.tracks[index].src],
 			volume: this.volume,
 			html5: true,
 			onload: () => {
@@ -39,22 +40,24 @@ class AudioPlayerClass {
 		this.sound.load();
 	}
 
-	play(onProgress) {
+	play() {
 		if (this.sound) {
 			this.sound.play();
-			this.trackProgress(onProgress); 
+			this.trackProgress(); 
 		}
 	}
 
-	onProgressUpdate(onProgress) {
-		this.trackProgress(onProgress);
+	onProgressUpdate() {
+		this.trackProgress();
 	}
 
-	trackProgress(onProgress) {
+	trackProgress() {
 		const updateProgress = () => {
 			if (this.sound && this.sound.playing()) {
 				const progress = (this.sound.seek()) / this.sound.duration();
-				onProgress(progress);
+				if (this.progressBarRef.current) {
+					this.progressBarRef.current.style.width = `${progress * 100}%`;
+				}
 				this.progressAnimationFrame = requestAnimationFrame(updateProgress);
 			}
 		};

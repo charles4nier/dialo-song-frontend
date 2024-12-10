@@ -1,12 +1,9 @@
 import React from 'react';
 
-const SvgHeadPhone = ({ a11yActive = true }) => (
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-    >
-        <path d="M18 6v12l-8.5-6L18 6zM8 6h-2v12h2V6z"/>
-  </svg>
+const SvgPrevious = ({ a11yActive = true }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" id="previous">
+        <path d="M4 4h4v10L28 4v24L8 18v10H4z"></path>
+    </svg>
 )
 
-export default SvgHeadPhone;
+export default SvgPrevious;

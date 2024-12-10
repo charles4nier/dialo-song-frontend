@@ -1,95 +1,122 @@
-#player {
-    display: flex;
-    flex-direction: column ;
-    justify-content: center;
-    align-items: center ;
-    width: 500px;
-    padding: 30px 20px;
-    margin: 20px auto;
-    font-family: Arial, sans-serif;
-    background-color: black;
+.audio-player {
+	&__seek-bar-container {
+		background-color: #b2b2b2;
+		margin-top: 25px;
+		width: 100%;
+		height: 2px;
+		border-radius: 2px;
+	}
 
-  
-    #controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      width: 50%;
-  
-      button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        width: 35px;
-        height: 35px;
-        cursor: pointer;
-        border-radius: 50%;
-        transition: background-color 0.3s;
-        background-color: #fff;
+	&__seek-bar {
+		background-color: #fff;
+		height: 100%;
+		width: 0;
+	}
 
-        svg {
-          width: 20px;
-          height: 20px;
-          
-          path {
-            fill: #000;
-          }
-        }
+	&__controls {
+		margin-top: 25px;
+		width: 100%;
+		padding: 10px 0;
+		display: flex;
+		justify-content: center;
+		bottom: 0;
+		left: 0;
+	}
 
-        &.playPause {
-          width: 60px;
-          height: 60px;
+	&__button {
+		border: none;
+		background: none;
 
-          svg {
-            width: 30px;
-            height: 30px;
-            
-          }
-        }
-      }
-    }
-  
-    .progress-bar {
-      position: relative;
-      width: 400px;
-      height: 6px;
-      background: #ccc;
-      cursor: pointer;
-      border-radius: 5px;
-      margin-top: 10px;
-      margin-bottom: 10px;
-  
-      .progress {
-        height: 100%;
-        background: rgb(255, 0, 157);
-        border-radius: 5px;
-      }
-    }
-  
-    #tracklist {
-      padding: 20px;
-      button {
-        text-align: left;
-        width: 100%;
-        padding: 10px;
-        cursor: pointer;
-        border-bottom: 1px solid #ddd;
-        background-color: transparent;
-        transition: background-color 0.3s;
-        border: none;
+		&__previous,
+		&__next {
+			svg {
+			transform: scale(0.7);
+			}
+		}
 
-        &.active {
-          color: rgb(255, 0, 157);
-        }
-  
-        &:hover {
-          background-color: #000;
-        }
-      }
-    }
-  }
+		&__toggle-play {
+			margin: 0 60px;
+			svg {
+				height: 30px;
+				width: 30px;
+			}
+		}
+
+		svg {
+			fill: #fff;
+		}
+	}
+
+	&__volume-control {
+		display: flex;
+		margin-top: 25px;
+		align-items: center;
+		svg {
+			fill: #fff;
+			margin-right: 20px;
+		}
+
+		input[type="range"] {
+			-webkit-appearance: none; /* Supprime le style par défaut sur Chrome/Safari */
+			-moz-appearance: none;    /* Supprime le style par défaut sur Firefox */
+			appearance: none;         /* Supprime le style par défaut sur les autres navigateurs */
+			width: 240px;              /* Largeur de la barre */
+			height: 5px;             /* Hauteur de la barre */
+			background: #b2b2b2;         /* Couleur de la barre */
+			border-radius: 0;         /* Carré : pas de bord arrondi */
+			cursor: pointer;
+			outline: none;            /* Supprime le contour lors de la sélection */
+		}
+
+
+		input[type="range"]::-webkit-slider-runnable-track,
+		input[type="range"]::-moz-range-track {
+			width: 240px;
+			height: 5px;
+			background: #fff;
+			border: none;
+			border-radius: 0;
+		}
+
+		input[type="range"]::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			width: 16px;              /* Largeur du curseur */
+			height: 16px;             /* Hauteur du curseur */
+			background: #fff;         /* Couleur du curseur */
+			border: 2px solid #fff; /* Bordure autour du curseur */
+			border-radius: 50%;         /* Curseur carré */
+			cursor: pointer;
+			position: relative;
+			top: 0px;                /* Ajustement visuel */
+		}
+	}
+
+	&__playlist {
+		margin-top: 25px;
+	}
+
+	&__list-item {
+		padding: 10px 0;
+		&--active {
+			button,
+			span {
+				color: #68cad1;
+			}
+		}
+
+		span {
+			display: inline-block;
+			font-size: 20px;
+			margin-right: 5px;
+		}
+	}
+
+	&__track {
+		font-size: 20px;
+		border: none;
+		color: #fff;
+		cursor: pointer;
+		background: none;
+	}
+}
   

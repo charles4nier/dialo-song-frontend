@@ -9,6 +9,7 @@ import LocaleProvider from './LocaleProvider'
 export const metadata = {
 	title: 'Dialo song',
 	description: '',
+    viewport: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no',
 }
 
 export default function RootLayout({ children, params }) {
@@ -21,11 +22,11 @@ export default function RootLayout({ children, params }) {
 	return (    
         <LocaleProvider locale={locale}>
             <html lang={locale}>
-                <body>
-                    <Header />
-                    <Nav />
-		            <main>{children}</main>
-                </body>
+            <body>
+                {/* <Header /> */}
+                {/* <Nav /> */}
+                <main>{children}</main>
+            </body>
             </html>
         </LocaleProvider>
 	)

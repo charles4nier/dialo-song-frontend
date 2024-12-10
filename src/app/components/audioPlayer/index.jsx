@@ -1,20 +1,26 @@
 import React, { useEffect, useState, useRef } from 'react';
 import classNames from 'classnames';
 import AudioPlayerClass from './audioPlayerClass';
+import SvgPlay from '../svg/svgPlay';
+import SvgPause from '../svg/svgPause';
+import SvgPrevious from '../svg/svgPrevious';
+import SvgNext from '../svg/svgNext';
+import SvgSound from '../svg/svgSound';
+import './style.scss';
 
-const BASE_CLASSNAME = 'fs-audio-player';
+const BASE_CLASSNAME = 'audio-player';
 
 const AudioPlayer = ({ tracks }) => {
-  console.log('allooooooo', tracks);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.7);
   const [audioPlayerInit, setAudioPlayerIsInit] = useState(false);
-  const audioPlayer = useRef(new AudioPlayerClass({tracks, setAudioPlayerIsInit}));
+  const progressBarRef = useRef(null);
+  const audioPlayer = useRef(new AudioPlayerClass({tracks, setAudioPlayerIsInit, progressBarRef}));
 
 	// Ref for the seek bar to update its width without triggering re-renders
-	const progressBarRef = useRef(null);
+
 
 	useEffect(() => {
 		if (audioPlayerInit) {
@@ -73,49 +79,12 @@ const AudioPlayer = ({ tracks }) => {
 
 	return (
 		<div className={BASE_CLASSNAME}>
-			<div className={`${BASE_CLASSNAME}__controls`}>
-				<button
-					type="button"
-					onClick={handlePrevious}
-					className={classNames(`${BASE_CLASSNAME}__button`)}
-				>
-					Previous
-				</button>
-				<button
-					type="button"
-					onClick={handlePlayPause}
-					className={classNames(`${BASE_CLASSNAME}__button`, {
-						[`${BASE_CLASSNAME}__button--playing`]: isPlaying,
-					})}
-				>
-					{isPlaying ? 'Pause' : 'Play'}
-				</button>
-				<button
-					type="button"
-					onClick={handleNext}
-					className={classNames(`${BASE_CLASSNAME}__button`)}
-				>
-					Next
-				</button>
-			</div>
-			<div className={classNames(`${BASE_CLASSNAME}__volume-control`)}>
-				<label>Volume:</label>
-				<input
-					type="range"
-					min="0"
-					max="1"
-					step="0.01"
-					value={volume}
-					onChange={handleVolumeChange}
-					className={classNames(`${BASE_CLASSNAME}__volume-slider`)}
-				/>
-			</div>
 			<div className={classNames(`${BASE_CLASSNAME}__seek-bar-container`)}>
 				<div
 					className={classNames(`${BASE_CLASSNAME}__seek-bar`)}
 					ref={progressBarRef}
 				></div>
-				<input
+				{/* <input
 					type="range"
 					min="0"
 					max={duration}
@@ -126,26 +95,63 @@ const AudioPlayer = ({ tracks }) => {
 				<span className={classNames(`${BASE_CLASSNAME}__time`)}>
 					{Math.floor((progressBarRef.current?.style.width || '0').replace('%', ''))} /{' '}
 					{Math.floor(duration)}
-				</span>
+				</span> */}
 			</div>
-			<div className={classNames(`${BASE_CLASSNAME}__playlist`)}>
+			<div className={`${BASE_CLASSNAME}__controls`}>
+				<button
+					type="button"
+					onClick={handlePrevious}
+					className={classNames(`${BASE_CLASSNAME}__button ${BASE_CLASSNAME}__button__previous`)}
+				>
+					<SvgPrevious/>
+				</button>
+				<button
+					type="button"
+					onClick={handlePlayPause}
+					className={classNames(`${BASE_CLASSNAME}__button ${BASE_CLASSNAME}__button__toggle-play`, {
+						[`${BASE_CLASSNAME}__button--playing`]: isPlaying,
+					})}
+				>
+					{isPlaying ? <SvgPause/> : <SvgPlay />}
+				</button>
+				<button
+					type="button"
+					onClick={handleNext}
+					className={classNames(`${BASE_CLASSNAME}__button ${BASE_CLASSNAME}__button__next`)}
+				>
+					<SvgNext/>
+				</button>
+			</div>
+			{/* <div className={classNames(`${BASE_CLASSNAME}__volume-control`)}>
+				<SvgSound />
+				<input
+					type="range"
+					min="0"
+					max="1"
+					step="0.01"
+					value={volume}
+					onChange={handleVolumeChange}
+					className={classNames(`${BASE_CLASSNAME}__volume-slider`)}
+				/>
+			</div> */}
+			<ul className={classNames(`${BASE_CLASSNAME}__playlist`)}>
 				{tracks.map((track, index) => (
-					<button
-						type="button"
-						key={index}
-						onClick={() => handleTrackSelect(index)}
-						className={classNames(`${BASE_CLASSNAME}__track`, {
-							[`${BASE_CLASSNAME}__track--active`]: index === currentTrackIndex,
-						})}
-						style={{
-							cursor: 'pointer',
-							color: index === currentTrackIndex ? 'blue' : 'black',
-						}}
-					>
-						{track}
+					<li 
+					className={classNames(`${BASE_CLASSNAME}__list-item`, {
+						[`${BASE_CLASSNAME}__list-item--active`]: index === currentTrackIndex,
+					})}>
+						<span>{index + 1}.</span>
+						<button
+							type="button"
+							key={index}
+							onClick={() => handleTrackSelect(index)}
+							className={`${BASE_CLASSNAME}__track`}
+						>
+							{track.name}
 					</button>
+					</li>
 				))}
-			</div>
+			</ul>
 		</div>
 	);
 };
