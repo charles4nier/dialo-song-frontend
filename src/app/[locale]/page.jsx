@@ -4,10 +4,12 @@ import { getData } from '../../services/api';
 // Components
 import SvgClock from '../components/svg/svgClock'
 import SvgHeadPhone from '../components/svg/svgHeadPhone'
+import { redirect } from 'next/navigation'
 
 const BASE_CASSNAME = 'loopsie-home';
 
 export default async function Page() {
+	redirect('/fr/search');
 	const data = await getData('/home');
 
 	return (

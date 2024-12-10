@@ -5,10 +5,15 @@ import { getData } from '../../../services/api';
 import GameTagSearch from '../../components/search/gameTagSearch';
 import PlaylistCard from '../../components/search/playlistCard';
 import GameSettingButton from '../../components/search/gameSettingButton';
+import classnames from 'classnames';
 
+import './style.scss';
+
+const BASE_CLASSNAME = 'template-search'
 
 export default function Search({ gameTags }){
   const [playlists, setPlaylists] = useState(null);
+  const [showPlaylists, setShowPlaylists] = useState(false);
   const [gameSettingTags, setGameSettingTags] = useState(null);
   const [showGameSettingTags, setShowGameSettingTags] = useState(false);
   const [gameSettingMessage, setGameSettingMessage] = useState('');
@@ -46,14 +51,13 @@ export default function Search({ gameTags }){
   
       } catch (error) {
         console.error('Error fetching playlists by tag:', error);
-        setErrorMessage(`Nous n'avons pas trouvé jeu correspondant au titre "${tag}". Pas de panique, nous pouvons quand même trouver une playlist pour votre jeu. Choisissez l'ambiance qui colle le mieux à votre jeu`);
+        setErrorMessage(`Nous n'avons pas trouvé de jeu correspondant au titre "${tag}". Pas de panique, nous pouvons quand même trouver la playlist adéquate.`);
       } finally {
         setIsLoading(false);
       }
     } else {
-      setGameSettingMessage(`Nous n'avons pas trouvé jeu correspondant au titre "${tag}". Pas de panique, nous pouvons quand même trouver une playlist pour votre jeu. Choisissez l'ambiance qui colle le mieux à votre jeu`);
+      setGameSettingMessage(`Nous n'avons pas trouvé de jeu correspondant au titre "${tag}". Pas de panique, nous pouvons quand même trouver la playlist adéquate.`);
       setIsLoading(false);
-      setShowGameSettingTags(true);
     }
   };
   
@@ -86,7 +90,7 @@ export default function Search({ gameTags }){
 
     } catch (error) {
       console.error('Error fetching playlists by tag:', error);
-      setErrorMessage(`Nous n'avons pas trouvé jeu correspondant au titre "${tag}". Pas de panique, nous pouvons quand même trouver une playlist pour votre jeu. Choisissez son univers :`);
+      setErrorMessage(`Nous n'avons pas trouvé de jeu correspondant au titre "${tag}". Pas de panique, nous pouvons quand même trouver la playlist adéquate.`);
     } finally {
       setIsLoading(false);
     }  
@@ -118,51 +122,59 @@ export default function Search({ gameTags }){
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (gameSettingMessage) {
+      setTimeout(() => setShowGameSettingTags(true), 200)
+    }
+  }, [gameSettingMessage])
+
+  useEffect(() => {
+    if (playlists?.length > 0) {
+      setTimeout(() => setShowPlaylists(true), 200)
+    }
+  }, [playlists])
+
   const handleSuggestionSelected = (suggestion) => {
     fetchPlaylistsByGameTag(suggestion);
   };
 
   return (
-    <div>
-      <h1>Search for Playlists by Game Tag</h1>
-      <GameTagSearch tags={Object.keys(gameTags)} onSuggestionSelected={handleSuggestionSelected} />
+    <div className={BASE_CLASSNAME}>
+      <h1 className={`${BASE_CLASSNAME}__title`}>Rechercher</h1>
+      {!gameSettingMessage && (!playlists || playlists.length === 0) && <GameTagSearch tags={Object.keys(gameTags)} onSuggestionSelected={handleSuggestionSelected} />}
 
-      {isLoading && <p>Loading playlists...</p>}
 
-      {errorMessage && (
-        <p>{errorMessage}</p>
-      )}
-
-      {playlists && playlists.length > 0 && (
-        <div>
-          <h2>Playlists Found</h2>
-          <div className="playlist-list">
+      {playlists?.length > 0 && (
+        <div className={classnames(`${BASE_CLASSNAME}__playlists-wrapper`, {
+          [`${BASE_CLASSNAME}__playlists-wrapper--show`]: showPlaylists
+        })}>
+          <h2 className={`${BASE_CLASSNAME}__playlists-title`}>Résultats</h2>
+          <ul className={`${BASE_CLASSNAME}__playlists-list`}>
             {playlists.map((playlist) => (
-              <PlaylistCard key={playlist.id} playlist={playlist} />
+              <li key={playlist.id}>
+                <PlaylistCard  playlist={playlist} />
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       )}
 
-      {!isLoading && playlists && playlists.length === 0 && (
-        <p>No playlists found for the selected tag.</p>
-      )}
-
-      {isLoadingGameSettingTags && <p>Loading game setting tags...</p>}
-
-      {gameSettingMessage && !playlists && showGameSettingTags && gameSettingTags && (
+      {gameSettingMessage && !playlists && gameSettingTags && (
         <div>
-         <p>{gameSettingMessage}</p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+         <p className={`${BASE_CLASSNAME}__game-setting-message`}>{gameSettingMessage}</p>
+          <div className={classnames(`${BASE_CLASSNAME}__game-setting-tag`, {
+          [`${BASE_CLASSNAME}__game-setting-tag--show`]: showGameSettingTags
+        })} >
+            <p className={`${BASE_CLASSNAME}__game-setting-title`}>Choisissez le genre qui colle le mieux à votre jeu : </p>
+            <ul className={`${BASE_CLASSNAME}__game-setting-list`}>
             {Object.keys(gameSettingTags).map((tag) => (
-              <GameSettingButton key={tag} onClick={fetchPlaylistsBySettingTag} tag={tag}/>
+              <li className={`${BASE_CLASSNAME}__game-setting-list-item`} key={tag}>
+                <GameSettingButton  onClick={fetchPlaylistsBySettingTag} tag={tag}/>
+              </li>
             ))}
+            </ul>
           </div>
         </div>
-      )}
-
-      {!isLoadingGameSettingTags && gameSettingTags && gameSettingTags.length === 0 && (
-        <p>No game setting tags found.</p>
       )}
     </div>
   );

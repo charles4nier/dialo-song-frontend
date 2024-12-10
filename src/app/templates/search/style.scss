@@ -1,0 +1,62 @@
+.template-search {
+    padding: 15px;
+
+    &__title {
+
+    }
+
+    &__game-setting-message {
+        margin-top: 25px;
+        line-height: 1.3;
+        font-size: 16px;
+    }
+
+
+    &__game-setting-tag,
+    &__playlists-wrapper  {
+       
+        opacity: 0;
+        transition: opacity .2s;
+        margin-top: 25px;
+
+        &--show {
+            opacity: 1;
+        }
+    }
+
+    &__game-setting-title {
+        line-height: 1.3;
+        font-size: 20px;
+    }
+
+    &__game-setting-list {
+        display: flex;
+        gap: 20px;
+        width: 100%;
+        overflow-x: scroll;
+        white-space: nowrap;
+        margin-top: 25px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+          }
+    }
+
+    &__game-setting-list-item {
+        width: 60%;
+        flex-shrink: 0;
+    }
+
+    &__playlists-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 25px;
+
+        li {
+            width: 48%;
+        }
+    }
+}

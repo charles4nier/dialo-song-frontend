@@ -1,5 +1,7 @@
 import React from 'react';
 
+import './style.scss';
+
 const PlaylistCard = ({ playlist }) => {
   const { title, slug, cover, game_ambience_tags, game_setting_tags } = playlist;
 
@@ -8,22 +10,27 @@ const PlaylistCard = ({ playlist }) => {
   // const settingTags = game_setting_tags.map(tag => tag.tag_name).join(', ');
 
   return (
-    <a href={`/fr/playlist/${slug}`} className="playlist-card">
-      <div className="playlist-card__content">
-        {/* Titre de la playlist */}
-        <h2 className="playlist-card__title">{title}</h2>
-        <img src={cover}/>
-        {/* Affichage des univers (setting tags) */}
-        {/* <div className="playlist-card__setting">
-          <strong>Univers :</strong> {settingTags || 'Non spécifié'}
-        </div> */}
+    <h2 className="playlist-card__title">
+      <a href={`/fr/playlist/${slug}`} className="playlist-card">
+        <div className="playlist-card__content">
+          {/* Titre de la playlist */}
+        
+          <img src={cover}/>
+         
+          {/* Affichage des univers (setting tags) */}
+          {/* <div className="playlist-card__setting">
+            <strong>Univers :</strong> {settingTags || 'Non spécifié'}
+          </div> */}
 
-        {/* Affichage des ambiances (ambience tags) */}
-        {/* <div className="playlist-card__ambience">
-          <strong>Ambiance :</strong> {ambienceTags || 'Non spécifié'}
-        </div> */}
-      </div>
-    </a>
+          {/* Affichage des ambiances (ambience tags) */}
+          {/* <div className="playlist-card__ambience">
+            <strong>Ambiance :</strong> {ambienceTags || 'Non spécifié'}
+          </div> */}
+        </div>
+      </a>
+
+      {title}
+    </h2> 
   );
 };
 

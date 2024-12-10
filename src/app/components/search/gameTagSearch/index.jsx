@@ -2,12 +2,20 @@ import React, { useState } from 'react';
 import './style.scss';
 import levenshtein from 'js-levenshtein';
 
-
+const BASE_CLASSNAME = 'game-tag-search';
 
 export default function GameTagSearch({ tags, onSuggestionSelected }) {
     const [query, setQuery] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
+
+    // Fonction pour capitaliser chaque mot
+    const capitalizeWords = (input) => {
+        return input
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+    };
 
     const handleInputChange = (event) => {
         const value = event.target.value;
@@ -40,21 +48,23 @@ export default function GameTagSearch({ tags, onSuggestionSelected }) {
             );
         } else if (event.key === 'Enter') {
             event.preventDefault();
+            setSuggestions([]);
+            let selectedWord = query;
             if (activeSuggestionIndex >= 0) {
-                const selectedSuggestion = suggestions[activeSuggestionIndex];
-                setQuery(selectedSuggestion);
-                setSuggestions([]);
-                onSuggestionSelected(selectedSuggestion);
-            } else {
-                onSuggestionSelected(query);
+                selectedWord = suggestions[activeSuggestionIndex];
             }
+
+            const formattedWord = capitalizeWords(selectedWord);
+            setQuery(formattedWord);
+            onSuggestionSelected(formattedWord);
         }
     };
 
     const handleSuggestionClick = (suggestion) => {
-        setQuery(suggestion);
+        const formattedWord = capitalizeWords(suggestion);
+        setQuery(formattedWord);
         setSuggestions([]);
-        onSuggestionSelected(suggestion);
+        onSuggestionSelected(formattedWord);
     };
 
     const handleInputClick = () => {
@@ -64,10 +74,10 @@ export default function GameTagSearch({ tags, onSuggestionSelected }) {
     };
 
     return (
-        <div className="tag-search-container">
+        <div className={BASE_CLASSNAME}>
             <input
                 type="text"
-                placeholder="Search for a tag..."
+                placeholder="Tapez le nom d'un jeu..."
                 value={query}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}

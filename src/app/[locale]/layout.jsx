@@ -16,7 +16,7 @@ export default function RootLayout({ children, params }) {
 	const { locale } = params
     
     if (locale !== 'en' && locale !== 'fr') {
-        redirect('/fr/home')
+        redirect('/fr/search')
     }
 
 	return (    
