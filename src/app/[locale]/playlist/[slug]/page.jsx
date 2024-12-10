@@ -19,7 +19,7 @@ export default async function Playlist({ params }) {
     fileContents = fs.readFileSync(filePath, 'utf-8'),
     data = JSON.parse(fileContents);
     data.basePlayListUrl = `/emulate-datas/playlists/${slug}/playlist/0`,
-    data.coverUrl =  `/emulate-datas/playlists/${slug}/cover.webp`;
+    data.coverUrl =  `/emulate-datas/playlists/${slug}/cover.png`;
 
     if (!data || !Object.keys(data).length) {
         redirect('/fr')

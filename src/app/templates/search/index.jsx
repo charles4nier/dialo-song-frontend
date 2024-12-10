@@ -38,7 +38,7 @@ export default function Search({ gameTags }){
           }
           const data = await response.json();
   
-          const coverUrl = `/emulate-datas/playlists/${playlistKey}/cover.webp`;
+          const coverUrl = `/emulate-datas/playlists/${playlistKey}/cover.png`;
           data.cover = coverUrl;
   
           return data;
@@ -77,7 +77,7 @@ export default function Search({ gameTags }){
         }
         const data = await response.json();
 
-        const coverUrl = `/emulate-datas/playlists/${playlistKey}/cover.webp`;
+        const coverUrl = `/emulate-datas/playlists/${playlistKey}/cover.png`;
         data.cover = coverUrl;
 
         return data;

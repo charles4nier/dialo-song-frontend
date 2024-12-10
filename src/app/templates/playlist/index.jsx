@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
+import SvgSearch from '../../components/svg/svgSearch';
 
 import './style.scss'
 
@@ -27,9 +29,14 @@ export default function PlayList({data}){
         };
     });
 
-    console.log('extrack', coverUrl);
+
     return (
        <div className={BASE_CLASSNAME}>
+            <div className={`${BASE_CLASSNAME}__link--container`}>
+                <Link className={`${BASE_CLASSNAME}__link`} href="/fr/search">
+                    <SvgSearch/>
+                </Link>
+            </div>
             <div  className={`${BASE_CLASSNAME}__cover__wrapper`}>
                 <img className={`${BASE_CLASSNAME}__cover`} src={coverUrl}/>
             </div>

@@ -1,6 +1,27 @@
 .template-playlist {
     position: relative;
-	padding: 0 30px 30px;
+	padding: 0 30px 70px;
+
+    &__link--container {
+        position: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        bottom: 0;
+        left: 0;
+        background: #000;
+        padding: 10px 0;
+    }
+
+    &__link {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 30px;
+        overflow: hidden;
+    }
 
     &__cover {
         width: 100%;
