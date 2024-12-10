@@ -7,7 +7,7 @@ import LocaleProvider from './LocaleProvider'
 // import { AvailableLocales } from '@/i18n/useContrib'
 
 export const metadata = {
-	title: 'Dialo song',
+	title: 'Playlistia',
 	description: '',
     viewport: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no',
 }
