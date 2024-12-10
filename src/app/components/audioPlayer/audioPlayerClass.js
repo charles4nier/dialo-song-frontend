@@ -18,6 +18,7 @@ class AudioPlayerClass {
 		this.currentTrackIndex = 0;
 		this.sound = null;
 		this.volume = 0.7;
+		this.isLoaded = false;
 
 		this.initTrack(this.currentTrackIndex);
 	}
@@ -25,17 +26,23 @@ class AudioPlayerClass {
 	initTrack(index) {
 		if (this.sound) {
 			this.sound.unload();
+			this.resetProgressBar();
+			this.setAudioPlayerIsInit(false);
 		}
 		this.sound = new Howl({
 			src: [this.tracks[index].src],
 			volume: this.volume,
 			html5: true,
 			onload: () => {
+				this.isLoaded = true;
 				if (this.setAudioPlayerIsInit) {
 					this.setAudioPlayerIsInit(true);
 				}
 			},
-			onend: () => this.nextTrack(),
+			onend: () => {
+				this.isLoaded = false;
+				this.nextTrack();
+			},
 		});
 		this.sound.load();
 	}
@@ -62,6 +69,10 @@ class AudioPlayerClass {
 			}
 		};
 		this.progressAnimationFrame = requestAnimationFrame(updateProgress);
+	}
+
+	resetProgressBar() {
+		this.progressBarRef.current.style.width = `${0 * 100}%`;
 	}
 
 	pause() {
