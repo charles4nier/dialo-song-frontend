@@ -8,9 +8,24 @@
 	}
 
 	&__seek-bar {
+		position: relative;
 		background-color: #fff;
 		height: 100%;
 		width: 0;
+
+		&::after {
+			content: '';
+			display: block;
+			position: absolute;
+			top: 50%;
+			right: 0;
+			transform: translate3d(50%, -50%, 0);
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			pointer-events: none;
+			background: #fff;
+		}
 	}
 
 	&__controls {

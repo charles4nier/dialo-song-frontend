@@ -1,17 +1,13 @@
 import { Howl, HowlOptions } from 'howler';
 
 class AudioPlayerClass {
-	 tracks;
+	tracks;
+	currentTrackIndex;
+	sound;
+	volume;
+	progressAnimationFrame = null;
 
-	 currentTrackIndex;
-
-	 sound;
-
-	 volume;
-
-	 progressAnimationFrame = null;
-
-	constructor({tracks, setAudioPlayerIsInit, progressBarRef}) {
+	constructor({ tracks, setAudioPlayerIsInit, progressBarRef }) {
 		this.tracks = tracks;
 		this.setAudioPlayerIsInit = setAudioPlayerIsInit;
 		this.progressBarRef = progressBarRef;
@@ -50,7 +46,7 @@ class AudioPlayerClass {
 	play() {
 		if (this.sound) {
 			this.sound.play();
-			this.trackProgress(); 
+			this.trackProgress();
 		}
 	}
 
@@ -61,7 +57,8 @@ class AudioPlayerClass {
 	trackProgress() {
 		const updateProgress = () => {
 			if (this.sound && this.sound.playing()) {
-				const progress = (this.sound.seek()) / this.sound.duration();
+				// Empêche les mises à jour pendant que l'utilisateur manipule la position
+				const progress = this.sound.seek() / this.sound.duration();
 				if (this.progressBarRef.current) {
 					this.progressBarRef.current.style.width = `${progress * 100}%`;
 				}
@@ -82,7 +79,7 @@ class AudioPlayerClass {
 		this.stopProgressTracking();
 	}
 
-	 stopProgressTracking() {
+	stopProgressTracking() {
 		if (this.progressAnimationFrame) {
 			cancelAnimationFrame(this.progressAnimationFrame);
 			this.progressAnimationFrame = null;
@@ -93,7 +90,22 @@ class AudioPlayerClass {
 		this.stopProgressTracking();
 		this.currentTrackIndex = (this.currentTrackIndex + 1) % this.tracks.length;
 		this.initTrack(this.currentTrackIndex);
-		this.play(() => {});
+		this.play();
+	}
+
+	// Nouvelle méthode : redémarre ou passe à la chanson précédente
+	restartOrPreviousTrack() {
+		if (this.sound) {
+			const currentTime = this.sound.seek();
+			if (currentTime > 3) {
+				// Si la chanson a commencé depuis plus de 3 secondes, revient au début
+				this.sound.seek(0);
+				this.resetProgressBar();
+			} else {
+				// Sinon, passe à la chanson précédente
+				this.previousTrack();
+			}
+		}
 	}
 
 	previousTrack() {
@@ -101,7 +113,7 @@ class AudioPlayerClass {
 		this.currentTrackIndex =
 			(this.currentTrackIndex - 1 + this.tracks.length) % this.tracks.length;
 		this.initTrack(this.currentTrackIndex);
-		this.play(() => {});
+		this.play();
 	}
 
 	setVolume(volume) {
@@ -121,7 +133,7 @@ class AudioPlayerClass {
 		this.stopProgressTracking();
 		this.currentTrackIndex = index;
 		this.initTrack(index);
-		this.play(() => {});
+		this.play();
 	}
 
 	getDuration() {
@@ -130,3 +142,5 @@ class AudioPlayerClass {
 }
 
 export default AudioPlayerClass;
+
+
