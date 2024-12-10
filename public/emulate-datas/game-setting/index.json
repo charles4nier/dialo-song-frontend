@@ -1,5 +1,7 @@
 {
     "western": ["western-spaghetti"],
     "péplum": ["epic-wonders"],
-    "horreur": ["peur-au-village", "l-ombre-de-whitechapel"]
+    "horreur": ["peur-au-village", "l-ombre-de-whitechapel"],
+    "rétro": ["balade-sur-les-rails"],
+    "fantastique": ["navigation-celeste"]
 }

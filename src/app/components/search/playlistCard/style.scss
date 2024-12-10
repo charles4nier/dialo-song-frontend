@@ -3,16 +3,11 @@
     text-decoration: none;
     color: inherit;
     border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 16px;
+    border-radius: 5px;
+    padding: 3px;
     margin-bottom: 20px;
-    background-color: #fff;
-    transition: box-shadow 0.3s ease;
+    background: #fff;
     width: 100%;
-    
-    &:hover {
-      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    }
     
     &__content {
       display: flex;
@@ -29,6 +24,11 @@
       font-size: 16px;
       color: #fff;
       margin-bottom: 5px;
+    }
+
+    img {
+      overflow: hidden;
+      border-radius: 5px;
     }
   }
   

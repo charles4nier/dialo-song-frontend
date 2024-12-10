@@ -47,6 +47,34 @@
     &__game-setting-list-item {
         width: 60%;
         flex-shrink: 0;
+
+        $gradients: (
+            linear-gradient(to left, #f5af19, #f12711),
+            linear-gradient(to left, #6a11cb, #2575fc),
+            linear-gradient(to left, #36d1dc, #5b86e5),
+            linear-gradient(to left, #42275a, #734b6d),
+            linear-gradient(to left, #f7971e, #ffd200),
+            linear-gradient(to left, #00c6ff, #0072ff),
+            linear-gradient(to left, #12c2e9, #c471ed),
+            linear-gradient(to left, #d4fc79, #96e6a1),
+            linear-gradient(to left, #fc5c7d, #6a82fb),
+            linear-gradient(to left, #8e2de2, #4a00e0),
+            linear-gradient(to left, #f953c6, #b91d73),
+            linear-gradient(to left, #ff9a9e, #fad0c4),
+            linear-gradient(to left, #43cea2, #185a9d),
+            linear-gradient(to left, #fa709a, #fee140),
+            linear-gradient(to left, #30cfd0, #330867),
+            linear-gradient(to left, #fddb92, #d1fdff),
+            linear-gradient(to left, #1e3c72, #2a5298),
+            linear-gradient(to left, #ffecd2, #fcb69f)
+        );
+
+        // Appliquer les gradients dynamiquement
+        @for $i from 1 through length($gradients) {
+        &:nth-child(#{$i}) {
+            background: nth($gradients, $i);
+        }
+    }
     }
 
     &__playlists-list {
@@ -60,3 +88,4 @@
         }
     }
 }
+

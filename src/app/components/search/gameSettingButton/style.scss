@@ -1,20 +1,25 @@
 .game-setting-button {
     width: 100%;
-    aspect-ratio: 1;
+    aspect-ratio: 1.56;
     border-radius: 5px;
-    background: linear-gradient(45deg, #ff6b6b, #f9ca24, #22a6b3);
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: flex-start;
     cursor: pointer;  // Ajouter un curseur pointer
     transition: transform 0.2s ease-in-out;
     border: none;
     text-transform: uppercase;
     font-weight: bold;
+    padding: 15px;
+    background: none;
   
     span {
-      font-size: 16px;
+      font-size: 24px;
       color: #fff;
     }
+
+    // Définition des gradients dans une liste
+    
   }
+
   

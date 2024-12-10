@@ -1,6 +1,6 @@
 .template-playlist {
     position: relative;
-	padding: 0 30px 70px;
+	padding: 30px 30px 70px;
 
     &__link--container {
         position: fixed;
@@ -12,6 +12,7 @@
         left: 0;
         background: #000;
         padding: 10px 0;
+        z-index: 1;
     }
 
     &__link {
@@ -25,15 +26,21 @@
 
     &__cover {
         width: 100%;
+        overflow: hidden;
+        border-radius: 5px;
     }
 
     &__cover__wrapper {
-        padding: 15px 0;
+        font-size: 0;
+        border-radius: 5px;
+        padding: 3px;
+        background: #fff;
     }
 
     &__title {
         font-size: 40px;
         font-weight: 500;
+        margin-top: 35px;
     }
 
     &__subtitle {
