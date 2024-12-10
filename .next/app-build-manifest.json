@@ -1,16 +1,9 @@
 {
   "pages": {
-    "/[locale]/playlist/[slug]/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/[locale]/playlist/[slug]/page.css",
-      "static/chunks/app/[locale]/playlist/[slug]/page.js"
-    ],
-    "/[locale]/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/[locale]/layout.css",
-      "static/chunks/app/[locale]/layout.js"
+      "static/chunks/app/page.js"
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -24,16 +17,23 @@
       "static/css/app/[locale]/page.css",
       "static/chunks/app/[locale]/page.js"
     ],
+    "/[locale]/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/[locale]/layout.css",
+      "static/chunks/app/[locale]/layout.js"
+    ],
     "/[locale]/search/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/css/app/[locale]/search/page.css",
       "static/chunks/app/[locale]/search/page.js"
     ],
-    "/page": [
+    "/[locale]/playlist/[slug]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
+      "static/css/app/[locale]/playlist/[slug]/page.css",
+      "static/chunks/app/[locale]/playlist/[slug]/page.js"
     ]
   }
 }

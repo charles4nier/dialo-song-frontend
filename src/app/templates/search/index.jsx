@@ -5,6 +5,7 @@ import { getData } from '../../../services/api';
 import GameTagSearch from '../../components/search/gameTagSearch';
 import PlaylistCard from '../../components/search/playlistCard';
 import GameSettingButton from '../../components/search/gameSettingButton';
+import SvgBoldArrowLeft from '../../components/svg/svgArrowLeft';
 import classnames from 'classnames';
 
 import './style.scss';
@@ -114,6 +115,14 @@ export default function Search({ gameTags }){
     }
   };
 
+  const resetSearch = () => {
+    setPlaylists(null);
+    setShowPlaylists(false);
+    setShowGameSettingTags(false);
+    setGameSettingMessage('');
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchGameSettingTags();
@@ -150,8 +159,8 @@ export default function Search({ gameTags }){
         })}>
           <h2 className={`${BASE_CLASSNAME}__playlists-title`}>Résultats</h2>
           <ul className={`${BASE_CLASSNAME}__playlists-list`}>
-            {playlists.map((playlist) => (
-              <li key={playlist.id}>
+            {playlists.map((playlist, index) => (
+              <li key={index}>
                 <PlaylistCard  playlist={playlist} />
               </li>
             ))}
@@ -174,6 +183,11 @@ export default function Search({ gameTags }){
             ))}
             </ul>
           </div>
+        </div>
+      )}
+      {(!!gameSettingMessage || playlists?.length > 0) && (
+        <div className={`${BASE_CLASSNAME}__reset`}>
+          <button className={`${BASE_CLASSNAME}__reset-button`} onClick={resetSearch}><SvgBoldArrowLeft/></button>
         </div>
       )}
     </div>
