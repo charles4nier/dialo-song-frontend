@@ -30,6 +30,15 @@ const AudioPlayer = ({ tracks }) => {
             const duration = audioPlayer.current.getDuration();
             if (duration > 0) {
                 setDuration(duration);
+            } else {
+                const interval = setInterval(() => {
+                    const updatedDuration = audioPlayer.current.getDuration();
+                    if (updatedDuration > 0) {
+                        setDuration(updatedDuration);
+                        clearInterval(interval);
+                    }
+                }, 100);
+                return () => clearInterval(interval);
             }
         }
     }, [audioPlayerInit]);
@@ -43,49 +52,36 @@ const AudioPlayer = ({ tracks }) => {
         setIsPlaying(!isPlaying);
     };
 
-    const handleNext = () => {
-        audioPlayer.current.nextTrack();
-        setCurrentTrackIndex((prevIndex) => (prevIndex + 1) % tracks.length);
-        setIsPlaying(true);
-    };
-
-    const handlePrevious = () => {
-        const currentTime = audioPlayer.current.sound.seek();
-        if (currentTime > 3) {
-            audioPlayer.current.sound.seek(0);
-            audioPlayer.current.resetProgressBar();
-        } else {
-            audioPlayer.current.previousTrack();
-            setCurrentTrackIndex(
-                (prevIndex) => (prevIndex - 1 + tracks.length) % tracks.length
-            );
-        }
-        setIsPlaying(true);
-    };
-
     const handleVolumeChange = (event) => {
         const newVolume = parseFloat(event.target.value);
         setVolume(newVolume);
         audioPlayer.current.setVolume(newVolume);
     };
 
-    const handleSeekClick = (event) => {
-        if (!progressBarContainerRef.current || !audioPlayerInit) return;
+    const handleSeekStart = () => {
+        audioPlayer.current.handleSeekStart();
+    };
+
+    const handleSeekMove = (event) => {
+        if (!progressBarContainerRef.current) return;
 
         const rect = progressBarContainerRef.current.getBoundingClientRect();
-        const clickX = event.clientX - rect.left;
-        const newProgress = clickX / rect.width;
+        const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+        const clickX = clientX - rect.left;
+        const newProgress = Math.max(0, Math.min(clickX / rect.width, 1));
 
-        const newTime = newProgress * duration;
+        audioPlayer.current.handleSeekMove(newProgress);
+    };
 
-        if (audioPlayer.current.sound && audioPlayer.current.sound.state() === 'loaded') {
-            audioPlayer.current.seekTo(newTime);
-            if (progressBarRef.current) {
-                progressBarRef.current.style.width = `${newProgress * 100}%`;
-            }
-        } else {
-            console.warn('Sound not loaded yet. Seek will be applied once loaded.');
-        }
+    const handleSeekEnd = (event) => {
+        if (!progressBarContainerRef.current) return;
+
+        const rect = progressBarContainerRef.current.getBoundingClientRect();
+        const clientX = event.changedTouches ? event.changedTouches[0].clientX : event.clientX;
+        const clickX = clientX - rect.left;
+        const newProgress = Math.max(0, Math.min(clickX / rect.width, 1));
+
+        audioPlayer.current.handleSeekEnd(newProgress);
     };
 
     const handleTrackSelect = (index) => {
@@ -99,7 +95,13 @@ const AudioPlayer = ({ tracks }) => {
             <div
                 className={`${BASE_CLASSNAME}__seek-bar-container`}
                 ref={progressBarContainerRef}
-                onClick={handleSeekClick}
+                onMouseDown={handleSeekStart}
+                onTouchStart={handleSeekStart}
+                onMouseMove={handleSeekMove}
+                onTouchMove={handleSeekMove}
+                onMouseUp={handleSeekEnd}
+                onTouchEnd={handleSeekEnd}
+                onMouseLeave={handleSeekEnd} // Handle when mouse leaves seek-bar
             >
                 <div
                     className={`${BASE_CLASSNAME}__seek-bar`}
@@ -109,7 +111,7 @@ const AudioPlayer = ({ tracks }) => {
             <div className={`${BASE_CLASSNAME}__controls`}>
                 <button
                     type="button"
-                    onClick={handlePrevious}
+                    onClick={() => audioPlayer.current.previousTrack()}
                     className={`${BASE_CLASSNAME}__button ${BASE_CLASSNAME}__button__previous`}
                 >
                     <SvgPrevious />
@@ -125,7 +127,7 @@ const AudioPlayer = ({ tracks }) => {
                 </button>
                 <button
                     type="button"
-                    onClick={handleNext}
+                    onClick={() => audioPlayer.current.nextTrack()}
                     className={`${BASE_CLASSNAME}__button ${BASE_CLASSNAME}__button__next`}
                 >
                     <SvgNext />
