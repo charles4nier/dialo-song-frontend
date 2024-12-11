@@ -42,7 +42,7 @@ export default function PlayList({data}){
             </div>
         	<div  className={`${BASE_CLASSNAME}__content__wrapper`}>
             	<h1 className={`${BASE_CLASSNAME}__title`}>{title}</h1>
-                <p className={`${BASE_CLASSNAME}__subtitle`}>Une playlist pour le jeu {game}</p>
+                <p className={`${BASE_CLASSNAME}__subtitle`}>Ambiance musicale recommandée pour {game}</p>
                 <AudioPlayer tracks={extractTracks} />
             </div>
        </div>
