@@ -6,6 +6,7 @@ class AudioPlayerClass {
 	sound;
 	volume;
 	progressAnimationFrame = null;
+	targetSeekPosition = null; // Position cible en cas de clic rapide
 
 	constructor({ tracks, setAudioPlayerIsInit, progressBarRef }) {
 		this.tracks = tracks;
@@ -34,6 +35,11 @@ class AudioPlayerClass {
 				if (this.setAudioPlayerIsInit) {
 					this.setAudioPlayerIsInit(true);
 				}
+				// Si une position cible a été définie, effectuer le seek après le chargement
+				if (this.targetSeekPosition !== null) {
+					this.seekTo(this.targetSeekPosition);
+					this.targetSeekPosition = null;
+				}
 			},
 			onend: () => {
 				this.isLoaded = false;
@@ -57,7 +63,6 @@ class AudioPlayerClass {
 	trackProgress() {
 		const updateProgress = () => {
 			if (this.sound) {
-				// Empêche les mises à jour pendant que l'utilisateur manipule la position
 				const progress = this.sound.seek() / this.sound.duration();
 				if (this.progressBarRef.current) {
 					this.progressBarRef.current.style.width = `${progress * 100}%`;
@@ -69,7 +74,9 @@ class AudioPlayerClass {
 	}
 
 	resetProgressBar() {
-		this.progressBarRef.current.style.width = `${0 * 100}%`;
+		if (this.progressBarRef.current) {
+			this.progressBarRef.current.style.width = '0%';
+		}
 	}
 
 	pause() {
@@ -93,16 +100,13 @@ class AudioPlayerClass {
 		this.play();
 	}
 
-	// Nouvelle méthode : redémarre ou passe à la chanson précédente
 	restartOrPreviousTrack() {
 		if (this.sound) {
 			const currentTime = this.sound.seek();
 			if (currentTime > 3) {
-				// Si la chanson a commencé depuis plus de 3 secondes, revient au début
 				this.sound.seek(0);
 				this.resetProgressBar();
 			} else {
-				// Sinon, passe à la chanson précédente
 				this.previousTrack();
 			}
 		}
@@ -124,13 +128,20 @@ class AudioPlayerClass {
 	}
 
 	seekTo(position) {
-		if (this.sound && this.isLoaded) {
-			const clampedPosition = Math.max(0, Math.min(position, this.sound.duration())); // Clamp entre 0 et la durée
-			this.sound.seek(clampedPosition);
-			this.updateProgressBar(clampedPosition); // Met à jour la barre de progression
+		if (this.sound) {
+			if (this.isLoaded) {
+				// Si chargé, effectue le seek immédiatement
+				const clampedPosition = Math.max(0, Math.min(position, this.sound.duration()));
+				this.sound.seek(clampedPosition);
+				this.updateProgressBar(clampedPosition);
+			} else {
+				// Si non chargé, enregistre la position pour plus tard
+				console.warn('Sound not loaded yet. Will seek once loaded.');
+				this.targetSeekPosition = position;
+			}
 		}
 	}
-	
+
 	updateProgressBar(position) {
 		if (this.progressBarRef.current && this.sound) {
 			const progress = position / this.sound.duration();
@@ -151,5 +162,6 @@ class AudioPlayerClass {
 }
 
 export default AudioPlayerClass;
+
 
 
