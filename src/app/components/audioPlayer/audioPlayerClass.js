@@ -56,7 +56,7 @@ class AudioPlayerClass {
 
 	trackProgress() {
 		const updateProgress = () => {
-			if (this.sound && this.sound.playing()) {
+			if (this.sound) {
 				// Empêche les mises à jour pendant que l'utilisateur manipule la position
 				const progress = this.sound.seek() / this.sound.duration();
 				if (this.progressBarRef.current) {
@@ -124,8 +124,17 @@ class AudioPlayerClass {
 	}
 
 	seekTo(position) {
-		if (this.sound) {
-			this.sound.seek(position);
+		if (this.sound && this.isLoaded) {
+			const clampedPosition = Math.max(0, Math.min(position, this.sound.duration())); // Clamp entre 0 et la durée
+			this.sound.seek(clampedPosition);
+			this.updateProgressBar(clampedPosition); // Met à jour la barre de progression
+		}
+	}
+	
+	updateProgressBar(position) {
+		if (this.progressBarRef.current && this.sound) {
+			const progress = position / this.sound.duration();
+			this.progressBarRef.current.style.width = `${progress * 100}%`;
 		}
 	}
 
